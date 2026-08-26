@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 智能岗位搜索看板</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <h1 class="logo">🔍 智能岗位搜索看板</h1>
+            <span class="badge badge-primary" id="totalCount">0</span>
+        </div>
+        <div class="header-right">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索岗位关键词..." class="search-input">
+                <button onclick="searchJobs()" class="btn btn-sm btn-primary">🔍 搜索</button>
+            </div>
+            <button onclick="refreshSearch()" class="btn btn-primary" id="refreshBtn">🔄 刷新搜索</button>
+            <button onclick="openAddModal()" class="btn btn-success">➕ 手动添加</button>
+        </div>
+    </header>
+    <div class="stats-bar">
+        <div class="stat-item" onclick="filterByStatus('')"><span class="stat-number" id="statTotal">0</span><span class="stat-label">全部</span></div>
+        <div class="stat-item stat-unread" onclick="filterByStatus('unread')"><span class="stat-number" id="statUnread">0</span><span class="stat-label">📋 未投递</span></div>
+        <div class="stat-item stat-applied" onclick="filterByStatus('applied')"><span class="stat-number" id="statApplied">0</span><span class="stat-label">✅ 已投递</span></div>
+        <div class="stat-item stat-skipped" onclick="filterByStatus('skipped')"><span class="stat-number" id="statSkipped">0</span><span class="stat-label">⏭️ 跳过</span></div>
+    </div>
+    <div class="kanban">
+        <div class="kanban-column"><div class="column-header column-unread"><h2>📋 未投递</h2><span class="count" id="unreadCount">0</span></div><div class="column-body" id="unreadColumn"></div></div>
+        <div class="kanban-column"><div class="column-header column-applied"><h2>✅ 已投递</h2><span class="count" id="appliedCount">0</span></div><div class="column-body" id="appliedColumn"></div></div>
+        <div class="kanban-column"><div class="column-header column-skipped"><h2>⏭️ 跳过</h2><span class="count" id="skippedCount">0</span></div><div class="column-body" id="skippedColumn"></div></div>
+    </div>
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <div class="modal-header"><h2>➕ 手动添加岗位</h2><button onclick="closeAddModal()" class="btn-close">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>公司名称 *</label><input type="text" id="addCompanyName" placeholder="如：腾讯" list="companyList"><datalist id="companyList"></datalist></div>
+                <div class="form-group"><label>岗位名称 *</label><input type="text" id="addTitle" placeholder="如：财务总监"></div>
+                <div class="form-group"><label>岗位摘要</label><textarea id="addSummary" rows="3" placeholder="岗位描述、要求等"></textarea></div>
+                <div class="form-row">
+                    <div class="form-group"><label>最低薪资（万/月）</label><input type="number" id="addSalaryMin" placeholder="5"></div>
+                    <div class="form-group"><label>最高薪资（万/月）</label><input type="number" id="addSalaryMax" placeholder="8"></div>
+                </div>
+                <div class="form-group"><label>薪资文本</label><input type="text" id="addSalaryText" placeholder="如：50K-80K/月"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>地点</label><input type="text" id="addLocation" placeholder="深圳"></div>
+                    <div class="form-group"><label>工作方式</label><select id="addWorkType"><option value="onsite">现场办公</option><option value="hybrid">混合办公</option><option value="remote">远程办公</option></select></div>
+                </div>
+                <div class="form-group"><label>投递链接</label><input type="url" id="addUrl" placeholder="https://..."></div>
+                <div class="form-group"><label>来源</label><select id="addSource"><option value="手动添加">手动添加</option><option value="官网">官网</option><option value="猎聘">猎聘</option><option value="Boss直聘">Boss直聘</option><option value="LinkedIn">LinkedIn</option><option value="智联招聘">智联招聘</option><option value="其他">其他</option></select></div>
+                <div class="form-group"><label>关键词标签</label><input type="text" id="addKeywords" placeholder="如：财务总监,数字化转型"></div>
+            </div>
+            <div class="modal-footer"><button onclick="closeAddModal()" class="btn btn-secondary">取消</button><button onclick="submitAddJob()" class="btn btn-success">✅ 确认添加</button></div>
+        </div>
+    </div>
+    <div class="loading-overlay" id="loadingOverlay" style="display:none;"><div class="loading-spinner"><div class="spinner"></div><p>正在搜索岗位，请稍候...</p><p class="loading-hint">首次搜索可能需要1-2分钟</p></div></div>
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
